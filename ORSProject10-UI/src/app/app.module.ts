@@ -1,3 +1,5 @@
+import { PageNotFoundComponent } from './page-not-found.component';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -73,6 +75,7 @@ export function myHttpLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    PageNotFoundComponent,
     MarksheetComponent,
     MarksheetListComponent,
     StudentComponent,
