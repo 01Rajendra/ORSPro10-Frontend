@@ -10,8 +10,8 @@ RUN npm install -g @angular/cli@7.3.6
 
 COPY . .
 
-# 🔥 IMPORTANT FIX: disable AOT for old code
-RUN ng build --prod --aot=false
+# 🔥 FIX: disable AOT + build optimizer
+RUN ng build --aot=false --build-optimizer=false
 
 # ================= STAGE 2: NGINX =================
 FROM nginx:alpine
