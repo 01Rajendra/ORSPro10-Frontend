@@ -1,22 +1,24 @@
-# ================= STAGE 1: BUILD =================
-FROM node:14 AS build
+# Stage 1: Build the frontend
+FROM node:18 as build
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
+RUN npm install
 
-RUN npm install --legacy-peer-deps
-RUN npm install -g @angular/cli@7.3.6
-
+# Copy source code and build
 COPY . .
+RUN npm run build
 
-# 🔥 FIX: disable AOT + build optimizer
-RUN ng build --aot=false --build-optimizer=false
-
-# ================= STAGE 2: NGINX =================
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-COPY --from=build /app/dist/ /usr/share/nginx/html
+# Copy build output to Nginx html folder
+COPY --from=build /app/build /usr/share/nginx/html
 
+# Expose port 80
 EXPOSE 80
+
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
