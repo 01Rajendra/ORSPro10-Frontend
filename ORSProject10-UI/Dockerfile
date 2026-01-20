@@ -3,13 +3,10 @@ FROM node:14 AS build
 
 WORKDIR /app
 
-# node-sass build tools
-RUN apt-get update && apt-get install -y python3 make g++ git
-
 # Copy package files
 COPY package*.json ./
 
-# FIX: Angular 7 dependency conflict
+# Fix Angular 7 peer dependency issue
 RUN npm install --legacy-peer-deps
 
 # Angular CLI (Angular 7 compatible)
