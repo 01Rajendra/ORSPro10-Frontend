@@ -1,30 +1,30 @@
-FROM node:16-bullseye
+# ================= STAGE 1: BUILD =================
+FROM node:14 AS build
 
-# App directory
 WORKDIR /app
 
-# Required tools (node-sass / native deps fix)
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    git \
- && rm -rf /var/lib/apt/lists/*
+# node-sass build tools
+RUN apt-get update && apt-get install -y python3 make g++ git
 
-# Copy package files first (cache benefit)
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# FIX: Angular 7 dependency conflict
+RUN npm install --legacy-peer-deps
 
-# Copy source code
+# Angular CLI (Angular 7 compatible)
+RUN npm install -g @angular/cli@7.3.6
+
+# Copy source
 COPY . .
 
-# Build frontend
-RUN npm run build
+# Build Angular app
+RUN ng build --prod
 
-# Expose port (React / Angular usually 3000)
-EXPOSE 3000
+# ================= STAGE 2: NGINX =================
+FROM nginx:alpine
 
-# Start app
-CMD ["npm", "start"]
+COPY --from=build /app/dist/ /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
