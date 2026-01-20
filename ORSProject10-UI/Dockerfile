@@ -1,3 +1,6 @@
+# Install build tools for node-sass
+RUN apt-get update && apt-get install -y python3 make g++ git
+
 # Stage 1: Build Angular app
  
 FROM node:12 AS build
