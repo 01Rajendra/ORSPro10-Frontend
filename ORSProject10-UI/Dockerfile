@@ -1,24 +1,13 @@
-# Stage 1: Build the frontend
-FROM node:18 as build
-
+# Stage 1
+FROM node:18 AS build
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
 RUN npm install
-
-# Copy source code and build
 COPY . .
-RUN npm run build
+RUN npm run build --prod
 
-# Stage 2: Serve with Nginx
+# Stage 2
 FROM nginx:alpine
-
-# Copy build output to Nginx html folder
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80
+COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
-
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
