@@ -1,12 +1,14 @@
-# Stage 1
-FROM node:18 AS build
+# Build stage
+FROM node:12 as build
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
+
 COPY . .
 RUN npm run build --prod
 
-# Stage 2
+# Nginx stage
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
